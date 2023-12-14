@@ -1,0 +1,5 @@
+
+= javac extension utility
+
+This simple java library aims add providing some convenience when implementing javac compiler extensions like
+annotation processors or compiler plugins.
