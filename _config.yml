@@ -1,1 +1,10 @@
 theme: jekyll-theme-slate
+asciidoc: {}
+asciidoctor:
+  base_dir: :docdir
+  safe: unsafe
+  attributes:
+    icons: font
+    idseparator: _
+    stylesdir: css
+    source-highlighter: coderay

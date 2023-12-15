@@ -1,7 +1,6 @@
 = Javac Extension Utility
 
 :icons: font
-//:stylesheet: empty.css
 
 
 This simple java library aims add providing some convenience when implementing javac compiler extensions like
