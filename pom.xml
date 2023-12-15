@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.miracelwhipp.javac.extension</groupId>
     <artifactId>javac-extension-utility</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>Javac Extension Utility</name>
     <description>A library easing the development of java annotation processors and compiler plugins</description>
     <url>https://miracelwhipp.github.io/javac-extension-utility/</url>
@@ -45,7 +43,7 @@
         <url>https://github.com/miracelwhipp/javac-extension-utility.git</url>
         <connection>scm:git:https://github.com/miracelwhipp/javac-extension-utility.git</connection>
         <developerConnection>scm:git:https://github.com/miracelwhipp/javac-extension-utility.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>0.0.1</tag>
     </scm>
 
     <distributionManagement>
