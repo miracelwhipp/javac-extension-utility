@@ -1,8 +1,11 @@
 = Javac Extension Utility
 
 :icons: font
+
 :toc: left
+:toc-title: table of contents
 :toclevels: 3
+:source-highlighter: rouge
 
 This simple java library aims add providing some convenience when implementing javac compiler extensions like
 annotation processors or compiler plugins.
