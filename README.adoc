@@ -146,5 +146,58 @@ include::src/it/warning-configured-annotation-processor/processor/src/main/java/
 `"warnings.txt"` so if the parameter is not configured the behaviour will still be the same.
 <2> The warnings are written to a file with the name configured.
 
+== Writing Compiler Plugins
+
+Compiler plugins typically add a list of task listeners to the current java task. Using this utility task listeners can
+simply be registered using the annotation `io.github.miracelwhipp.javac.extension.compiler.plugin.JavaCompilerTaskListener`
+in compiler plugins derived from `io.github.miracelwhipp.javac.extension.compiler.plugin.ReflectiveCompilerPlugin`.
+
+[source,java]
+----
+@JavaCompilerTaskListener(MyTaskListener.class)
+@JavaCompilerTaskListener(MyOtherTaskListener.class)
+public class MyCompilerPlugin extends ReflectiveCompilerPlugin {
+
+}
+----
+
+The plugins name can be specified with the annotation `io.github.miracelwhipp.javac.extension.compiler.plugin.PluginName`:
+
+[source,java]
+----
+@PluginName("my-plugin")
+@JavaCompilerTaskListener(MyTaskListener.class)
+@JavaCompilerTaskListener(MyOtherTaskListener.class)
+public class MyCompilerPlugin extends ReflectiveCompilerPlugin {
+
+}
+----
+
+A task listener can be implemented deriving from `io.github.miracelwhipp.javac.extension.compiler.plugin.ReflectiveJavaCompilerTaskListener`.
+I order to listen to a task event simply declare a void method accepting one parameter of the type TaskEvent, annotated
+either with `io.github.miracelwhipp.javac.extension.compiler.plugin.Before` or `io.github.miracelwhipp.javac.extension.compiler.plugin.After`.
+Both annotation specify a TaskEvent.Kind determining the compile step before or after which the method will be called.
+
+[source,java]
+----
+public class MyTaskListener extends ReflectiveJavaCompilerTaskListener {
+
+    @Before(TaskEvent.Kind.PARSE) // <1>
+    public void beforeParsing(TaskEvent event) {
+
+        // ...
+    }
+
+    @After(TaskEvent.Kind.PARSE) // <2>
+    public void afterAnalyze(TaskEvent event) {
+
+        // ...
+    }
+
+}
+----
+<1> the method `beforeParsing` will be called before the compiler parses a source file
+<2> the method `afterAnalyze` will be called after the compiler analyzed a source file
+
 
 endif::[]

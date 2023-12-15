@@ -10,6 +10,11 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * This class implements the core java compiler task listener invocation. To use it define a subclass of it. More
+ * documentation can be found
+ * <a href="https://miracelwhipp.github.io/javac-extension-utility/">here</a>.
+ */
 public abstract class ReflectiveJavaCompilerTaskListener implements TaskListener {
 
     private final Map<TaskEvent.Kind, Consumer<TaskEvent>> startedHandlers;
@@ -43,16 +48,15 @@ public abstract class ReflectiveJavaCompilerTaskListener implements TaskListener
                 continue;
             }
 
-            StartJavaCompilerEvent annotation = method.getAnnotation(StartJavaCompilerEvent.class);
+            Before annotation = method.getAnnotation(Before.class);
 
             Map<TaskEvent.Kind, Consumer<TaskEvent>> handlers = startedHandlers;
 
             TaskEvent.Kind kind;
 
-
             if (annotation == null) {
 
-                AfterJavaCompilerEvent afterAnnotation = method.getAnnotation(AfterJavaCompilerEvent.class);
+                After afterAnnotation = method.getAnnotation(After.class);
 
                 if (afterAnnotation == null) {
 
@@ -73,6 +77,7 @@ public abstract class ReflectiveJavaCompilerTaskListener implements TaskListener
             handlers.put(kind, event -> {
 
                 try {
+
                     method.invoke(me, event);
 
                 } catch (IllegalAccessException | InvocationTargetException e) {

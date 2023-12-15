@@ -46,43 +46,43 @@ public class SimpleCompilerPlugin extends ReflectiveCompilerPlugin {
             log("on " + event.getKind().toString());
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.PARSE)
+        @Before(TaskEvent.Kind.PARSE)
         public void parse(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.ENTER)
+        @Before(TaskEvent.Kind.ENTER)
         public void enter(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.ANALYZE)
+        @Before(TaskEvent.Kind.ANALYZE)
         public void analyze(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.GENERATE)
+        @Before(TaskEvent.Kind.GENERATE)
         public void generate(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.ANNOTATION_PROCESSING)
+        @Before(TaskEvent.Kind.ANNOTATION_PROCESSING)
         public void process(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.ANNOTATION_PROCESSING_ROUND)
+        @Before(TaskEvent.Kind.ANNOTATION_PROCESSING_ROUND)
         public void processRound(TaskEvent event) {
 
             log(event);
         }
 
-        @StartJavaCompilerEvent(TaskEvent.Kind.COMPILATION)
+        @Before(TaskEvent.Kind.COMPILATION)
         public void compilation(TaskEvent event) {
 
             log(event);
@@ -96,19 +96,19 @@ public class SimpleCompilerPlugin extends ReflectiveCompilerPlugin {
             log("after " + event.getKind().toString());
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.PARSE)
+        @After(TaskEvent.Kind.PARSE)
         public void parse(TaskEvent event) {
 
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.ENTER)
+        @After(TaskEvent.Kind.ENTER)
         public void enter(TaskEvent event) {
 
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.ANALYZE)
+        @After(TaskEvent.Kind.ANALYZE)
         public void analyze(TaskEvent event) {
 
             event.getCompilationUnit().accept(new AssignmentCounter(), outputFile);
@@ -116,25 +116,25 @@ public class SimpleCompilerPlugin extends ReflectiveCompilerPlugin {
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.GENERATE)
+        @After(TaskEvent.Kind.GENERATE)
         public void generate(TaskEvent event) {
 
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.ANNOTATION_PROCESSING)
+        @After(TaskEvent.Kind.ANNOTATION_PROCESSING)
         public void process(TaskEvent event) {
 
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.ANNOTATION_PROCESSING_ROUND)
+        @After(TaskEvent.Kind.ANNOTATION_PROCESSING_ROUND)
         public void processRound(TaskEvent event) {
 
             log(event);
         }
 
-        @AfterJavaCompilerEvent(TaskEvent.Kind.COMPILATION)
+        @After(TaskEvent.Kind.COMPILATION)
         public void compilation(TaskEvent event) {
 
             log(event);

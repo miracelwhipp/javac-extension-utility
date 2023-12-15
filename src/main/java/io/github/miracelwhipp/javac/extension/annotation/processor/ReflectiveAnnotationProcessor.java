@@ -12,6 +12,11 @@ import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
 
+/**
+ * This class implements the core annotation processing registration. To use it define a subclass of it. More
+ * documentation can be found
+ * <a href="https://miracelwhipp.github.io/javac-extension-utility/#_using_javac_extension_utilities">here</a>.
+ */
 public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
     private Map<String, Map<Class<?>, BiConsumer<Annotation, Element>>> handlers = new LinkedHashMap<>();
@@ -31,6 +36,11 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
         super.init(processingEnv);
 
         scanClass(getClass());
+
+        for (Runnable initializer : initializers) {
+
+            initializer.run();
+        }
     }
 
     @Override
@@ -46,16 +56,6 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnvironment) {
-
-        if (!initializersRun) {
-
-            for (Runnable initializer : initializers) {
-
-                initializer.run();
-            }
-
-            initializersRun = true;
-        }
 
         // do not run round initializers in last round
         if (!annotations.isEmpty()) {
@@ -123,6 +123,13 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
     private void scanClass(Class<?> clazz) {
 
+        Method[] methods = clazz.getDeclaredMethods();
+
+        // adding the completion handlers before visiting the super class in order to execute the completion handlers
+        // of the subclass before the completion handlers.
+        roundCompletions.addAll(getRunnableHandlers(methods, RoundCompletionHandler.class));
+        completions.addAll(getRunnableHandlers(methods, CompletionHandler.class));
+
         Class<?> superclass = clazz.getSuperclass();
 
         if (superclass != null && !superclass.equals(Object.class)) {
@@ -132,13 +139,11 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
         getConfiguration(clazz);
 
-        Method[] methods = clazz.getDeclaredMethods();
-
         addElementHandlers(methods);
+
+        // adding the initialize handler after visiting the super class in order to execute them super class first.
         initializers.addAll(getRunnableHandlers(methods, InitializeHandler.class));
         roundInitializers.addAll(getRunnableHandlers(methods, RoundInitializeHandler.class));
-        roundCompletions.addAll(getRunnableHandlers(methods, RoundCompletionHandler.class));
-        completions.addAll(getRunnableHandlers(methods, CompletionHandler.class));
     }
 
     private void addElementHandlers(Method[] methods) {
