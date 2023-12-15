@@ -13,7 +13,9 @@ import javax.tools.StandardLocation;
 import java.io.IOException;
 import java.io.Writer;
 
-public class SimpleAnnotationProcessor extends ReflectiveAnnotationProcessor {
+// tag::header[]
+public class SimpleAnnotationProcessor extends ReflectiveAnnotationProcessor { // <1>
+// end::header[]
 
     @Parameter(name = "annotation.count.factor", defaultValue = "1")
     private int factor;
@@ -23,9 +25,11 @@ public class SimpleAnnotationProcessor extends ReflectiveAnnotationProcessor {
     private StringBuilder target = new StringBuilder();
 
 
-    @ElementHandler
+// tag::method-handler-header[]
+    @ElementHandler // <2>
     public void countMethods(ToCount annotation, ExecutableElement element) {
 
+// end::method-handler-header[]
         target.append("adding sum\n");
 
         processingEnv.getMessager().printMessage(Diagnostic.Kind.MANDATORY_WARNING, "adding sum ", element);
@@ -33,16 +37,17 @@ public class SimpleAnnotationProcessor extends ReflectiveAnnotationProcessor {
         currentSum += factor;
     }
 
-    @ElementHandler
+// tag::field-handler-header[]
+    @ElementHandler // <3>
     public void countFields(ToCount annotation, VariableElement element) {
 
+// end::field-handler-header[]
         target.append("adding sum\n");
 
         processingEnv.getMessager().printMessage(Diagnostic.Kind.MANDATORY_WARNING, "adding sum ", element);
 
         currentSum += factor;
     }
-
 
     @CompletionHandler
     public void finish() throws IOException {

@@ -220,7 +220,7 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
                 parameter = parameterValue;
 
-            } else if (processingEnv.getOptions().get(parameterDefinition.name()) == null && parameterDefinition.defaultValue().equals("")) {
+            } else if (processingEnv.getOptions().get(parameterDefinition.name()) == null && parameterDefinition.defaultValue().isEmpty()) {
 
                 continue;
 
@@ -251,6 +251,15 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
             } else if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class)) {
 
                 parameter = Boolean.valueOf(parameterValue);
+
+            } else if (type.isAssignableFrom(Character.class) || type.isAssignableFrom(char.class)) {
+
+                if (parameterValue.length() != 1) {
+
+                    throw new IllegalStateException("cannot parse " + parameterValue + " as character");
+                }
+
+                parameter = parameterValue.charAt(0);
             }
 
             field.setAccessible(true);
