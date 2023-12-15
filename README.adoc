@@ -5,7 +5,7 @@
 :toc: left
 :toc-title: table of contents
 :toclevels: 3
-:source-highlighter: highlight.js
+:source-highlighter: pygments
 
 This simple java library aims add providing some convenience when implementing javac compiler extensions like
 annotation processors or compiler plugins.
