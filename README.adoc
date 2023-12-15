@@ -6,6 +6,12 @@
 This simple java library aims add providing some convenience when implementing javac compiler extensions like
 annotation processors or compiler plugins.
 
+ifdef::env-github[]
+The complete documentation can be found https://miracelwhipp.github.io/javac-extension-utility[here]
+endif::[]
+ifndef::env-github[]
+
+
 == Writing Annotation Processors
 
 There are https://hannesdorfmann.com/annotation-processing/annotationprocessing101/[some] helpful
@@ -137,3 +143,4 @@ include::src/it/warning-configured-annotation-processor/processor/src/main/java/
 <2> The warnings are written to a file with the name configured.
 
 
+endif::[]
