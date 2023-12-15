@@ -1,8 +1,7 @@
-name: build commits
+name: build commits jdk 11
 
 on:
   push:
-    branches-ignore: [ master ]
   pull_request: {}
 
 
@@ -16,7 +15,7 @@ jobs:
       - name: set up jdk
         uses: actions/setup-java@v3
         with:
-          java-version: '21'
+          java-version: '11'
           distribution: 'temurin'
           cache: maven
       - name: execute maven

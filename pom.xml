@@ -7,6 +7,10 @@
     <groupId>io.github.miracelwhipp.javac.extension</groupId>
     <artifactId>javac-extension-utility</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <name>Javac Extension Utility</name>
+    <description>A library easing the development of java annotation processors and compiler plugins</description>
+    <url>https://miracelwhipp.github.io/javac-extension-utility/</url>
+
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
