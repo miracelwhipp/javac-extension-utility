@@ -11,7 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * This class implements the core java compiler task listener registration. To use it define a subclass of it. More
  * documentation can be found
- * <a href="https://miracelwhipp.github.io/javac-extension-utility/">here</a>.
+ * <a href="https://miracelwhipp.github.io/javac-extension-utility/#_writing_compiler_plugins">here</a>.
  */
 public abstract class ReflectiveCompilerPlugin implements Plugin {
 
