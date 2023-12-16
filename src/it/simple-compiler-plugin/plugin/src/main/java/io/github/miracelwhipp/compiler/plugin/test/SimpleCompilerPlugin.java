@@ -5,7 +5,7 @@ import com.google.auto.service.AutoService;
 import com.sun.source.util.Plugin;
 import com.sun.source.util.TaskEvent;
 import io.github.miracelwhipp.javac.extension.compiler.plugin.*;
-import org.kohsuke.args4j.Option;
+import io.github.miracelwhipp.javac.extension.configuration.Parameter;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +20,8 @@ public class SimpleCompilerPlugin extends ReflectiveCompilerPlugin {
 
     public static class AbstractListener extends ReflectiveJavaCompilerTaskListener {
 
-        @Option(name = "-o", aliases = {"--output-file"}, usage = "the file to log to")
-        protected String outputFile = "target/log.txt";
+        @Parameter(name = "o", defaultValue = "target/log.txt")
+        protected String outputFile;
 
         protected void log(String message) {
 

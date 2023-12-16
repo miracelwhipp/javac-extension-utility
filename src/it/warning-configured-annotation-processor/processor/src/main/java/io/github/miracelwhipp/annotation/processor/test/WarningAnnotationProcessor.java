@@ -3,7 +3,7 @@ package io.github.miracelwhipp.annotation.processor.test;
 import io.github.miracelwhipp.javac.extension.annotation.processor.ElementHandler;
 import io.github.miracelwhipp.javac.extension.annotation.processor.ReflectiveAnnotationProcessor;
 import io.github.miracelwhipp.javac.extension.annotation.processor.CompletionHandler;
-import io.github.miracelwhipp.javac.extension.annotation.processor.Parameter;
+import io.github.miracelwhipp.javac.extension.configuration.Parameter;
 
 import javax.lang.model.element.Element;
 import javax.tools.Diagnostic;

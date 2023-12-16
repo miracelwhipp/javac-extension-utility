@@ -1,4 +1,6 @@
-package io.github.miracelwhipp.javac.extension.annotation.processor;
+package io.github.miracelwhipp.javac.extension.configuration;
+
+import io.github.miracelwhipp.javac.extension.annotation.processor.ReflectiveAnnotationProcessor;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,5 +24,5 @@ public @interface Parameter {
     /**
      * This property specifies the default value of the configuration property.
      */
-    String defaultValue() default "";
+    String[] defaultValue() default {};
 }

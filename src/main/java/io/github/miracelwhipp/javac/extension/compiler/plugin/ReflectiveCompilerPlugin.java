@@ -3,8 +3,9 @@ package io.github.miracelwhipp.javac.extension.compiler.plugin;
 import com.sun.source.util.JavacTask;
 import com.sun.source.util.Plugin;
 import com.sun.source.util.TaskListener;
-import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
+import io.github.miracelwhipp.javac.extension.configuration.CommandLine;
+import io.github.miracelwhipp.javac.extension.configuration.ConfigurationPropertyParsers;
+import io.github.miracelwhipp.javac.extension.configuration.Configurator;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -30,16 +31,32 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
         return getClass().getCanonicalName();
     }
 
+    public JavacTask getTask() {
+        return task;
+    }
+
     @Override
     public void init(JavacTask javacTask, String... strings) {
 
-        task = javacTask;
+        try {
 
-        JavaCompilerTaskListener[] taskListeners = getClass().getAnnotationsByType(JavaCompilerTaskListener.class);
+            task = javacTask;
 
-        for (JavaCompilerTaskListener taskListener : taskListeners) {
+            CommandLine commandLine = CommandLine.parse(strings);
 
-            try {
+            Configurator<ReflectiveCompilerPlugin> configurator = commandLine.configuratorForClass(getClass());
+            configurator.configure(this);
+
+            CompilerTaskEventListenerRegistry listenerRegistry = CompilerTaskEventListenerRegistry.forInstance(this);
+
+            if (!listenerRegistry.isEmpty()) {
+
+                javacTask.addTaskListener(new RegistryBasedTaskListener(listenerRegistry, task));
+            }
+
+            JavaCompilerTaskListener[] taskListeners = getClass().getAnnotationsByType(JavaCompilerTaskListener.class);
+
+            for (JavaCompilerTaskListener taskListener : taskListeners) {
 
                 TaskListener listener = taskListener.value().getDeclaredConstructor().newInstance();
 
@@ -48,21 +65,16 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
                     ((TaskAware) listener).setTask(task);
                 }
 
-                CmdLineParser parser = new CmdLineParser(listener);
+                commandLine.configuratorForClass(listener.getClass()).configure(ConfigurationPropertyParsers.cast(listener));
 
-                parser.parseArgument(strings);
 
                 javacTask.addTaskListener(listener);
-
-            } catch (CmdLineException e) {
-
-                throw new IllegalArgumentException(e);
-
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                     NoSuchMethodException e) {
-
-                throw new IllegalStateException(e);
             }
+
+        } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
+                 NoSuchMethodException e) {
+
+            throw new IllegalStateException(e);
         }
     }
 }

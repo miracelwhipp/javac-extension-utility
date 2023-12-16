@@ -1,5 +1,8 @@
 package io.github.miracelwhipp.javac.extension.annotation.processor;
 
+import io.github.miracelwhipp.javac.extension.configuration.ConfigurationPropertyParsers;
+import io.github.miracelwhipp.javac.extension.configuration.Parameter;
+
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
@@ -11,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * This class implements the core annotation processing registration. To use it define a subclass of it. More
@@ -19,23 +23,28 @@ import java.util.function.BiConsumer;
  */
 public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
-    private Map<String, Map<Class<?>, BiConsumer<Annotation, Element>>> handlers = new LinkedHashMap<>();
+    private final Map<String, Map<Class<?>, BiConsumer<Annotation, Element>>> handlers = new LinkedHashMap<>();
 
-    private Map<String, Class<? extends Annotation>> annotationClassesByName = new LinkedHashMap<>();
+    private final Map<String, Class<? extends Annotation>> annotationClassesByName = new LinkedHashMap<>();
 
-    private List<Runnable> initializers = new ArrayList<>();
-    private List<Runnable> roundInitializers = new ArrayList<>();
-    private List<Runnable> roundCompletions = new ArrayList<>();
-    private List<Runnable> completions = new ArrayList<>();
+    private final List<Runnable> initializers = new ArrayList<>();
+    private final List<Runnable> roundInitializers = new ArrayList<>();
+    private final List<Runnable> roundCompletions = new ArrayList<>();
+    private final List<Runnable> completions = new ArrayList<>();
 
-    private boolean initializersRun = false;
+    private final Map<String, Consumer<ProcessingEnvironment>> optionSetters = ConfigurationPropertyParsers.parameterSettersForInstance(this);
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
 
         super.init(processingEnv);
 
-        scanClass(getClass());
+        for (Consumer<ProcessingEnvironment> option : optionSetters.values()) {
+
+            option.accept(processingEnv);
+        }
+
+        scanClassForHandlers(getClass());
 
         for (Runnable initializer : initializers) {
 
@@ -51,7 +60,7 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public Set<String> getSupportedOptions() {
-        return super.getSupportedOptions();
+        return optionSetters.keySet();
     }
 
     @Override
@@ -121,7 +130,7 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
         return true;
     }
 
-    private void scanClass(Class<?> clazz) {
+    private void scanClassForHandlers(Class<?> clazz) {
 
         Method[] methods = clazz.getDeclaredMethods();
 
@@ -134,10 +143,8 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
 
         if (superclass != null && !superclass.equals(Object.class)) {
 
-            scanClass(superclass);
+            scanClassForHandlers(superclass);
         }
-
-        getConfiguration(clazz);
 
         addElementHandlers(methods);
 
@@ -199,82 +206,6 @@ public abstract class ReflectiveAnnotationProcessor extends AbstractProcessor {
             })) != null) {
 
                 throw new IllegalStateException("overwrite element handler by method " + method);
-            }
-        }
-    }
-
-    private void getConfiguration(Class<?> clazz) {
-        Field[] fields = clazz.getDeclaredFields();
-
-        for (Field field : fields) {
-
-            Parameter parameterDefinition = field.getAnnotation(Parameter.class);
-
-            if (parameterDefinition == null) {
-
-                continue;
-            }
-
-            String parameterValue = processingEnv.getOptions().getOrDefault(parameterDefinition.name(), parameterDefinition.defaultValue());
-
-            Class<?> type = field.getType();
-
-            Object parameter = null;
-
-            if (type == String.class) {
-
-                parameter = parameterValue;
-
-            } else if (processingEnv.getOptions().get(parameterDefinition.name()) == null && parameterDefinition.defaultValue().isEmpty()) {
-
-                continue;
-
-            } else if (type.isAssignableFrom(Double.class) || type.isAssignableFrom(double.class)) {
-
-                parameter = Double.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Float.class) || type.isAssignableFrom(float.class)) {
-
-                parameter = Float.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Long.class) || type.isAssignableFrom(long.class)) {
-
-                parameter = Long.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Integer.class) || type.isAssignableFrom(int.class)) {
-
-                parameter = Integer.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Short.class) || type.isAssignableFrom(short.class)) {
-
-                parameter = Short.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Byte.class) || type.isAssignableFrom(byte.class)) {
-
-                parameter = Byte.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Boolean.class) || type.isAssignableFrom(boolean.class)) {
-
-                parameter = Boolean.valueOf(parameterValue);
-
-            } else if (type.isAssignableFrom(Character.class) || type.isAssignableFrom(char.class)) {
-
-                if (parameterValue.length() != 1) {
-
-                    throw new IllegalStateException("cannot parse " + parameterValue + " as character");
-                }
-
-                parameter = parameterValue.charAt(0);
-            }
-
-            field.setAccessible(true);
-            try {
-
-                field.set(this, parameter);
-
-            } catch (IllegalAccessException e) {
-
-                throw new RuntimeException(e);
             }
         }
     }
