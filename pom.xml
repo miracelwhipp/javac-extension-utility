@@ -46,6 +46,7 @@
         <tag>HEAD</tag>
     </scm>
 
+
     <distributionManagement>
         <snapshotRepository>
             <id>ossrh</id>
