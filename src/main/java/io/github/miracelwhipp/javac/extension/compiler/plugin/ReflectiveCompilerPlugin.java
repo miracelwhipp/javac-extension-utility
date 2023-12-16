@@ -32,6 +32,7 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
     }
 
     public JavacTask getTask() {
+
         return task;
     }
 
@@ -66,7 +67,6 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
                 }
 
                 commandLine.configuratorForClass(listener.getClass()).configure(ConfigurationPropertyParsers.cast(listener));
-
 
                 javacTask.addTaskListener(listener);
             }
