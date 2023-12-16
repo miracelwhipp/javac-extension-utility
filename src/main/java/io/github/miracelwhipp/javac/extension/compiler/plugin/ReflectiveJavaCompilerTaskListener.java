@@ -1,5 +1,6 @@
 package io.github.miracelwhipp.javac.extension.compiler.plugin;
 
+import com.sun.source.util.JavacTask;
 import com.sun.source.util.TaskEvent;
 import com.sun.source.util.TaskListener;
 
@@ -15,16 +16,28 @@ import java.util.function.Consumer;
  * documentation can be found
  * <a href="https://miracelwhipp.github.io/javac-extension-utility/#_writing_compiler_plugins">here</a>.
  */
-public abstract class ReflectiveJavaCompilerTaskListener implements TaskListener {
+public abstract class ReflectiveJavaCompilerTaskListener implements TaskListener, TaskAware {
 
     private final Map<TaskEvent.Kind, Consumer<TaskEvent>> startedHandlers;
     private final Map<TaskEvent.Kind, Consumer<TaskEvent>> finishedHandlers;
+
+    private JavacTask task;
 
     protected ReflectiveJavaCompilerTaskListener() {
         this.startedHandlers = new LinkedHashMap<>();
         this.finishedHandlers = new LinkedHashMap<>();
 
         readEventHandlers(getClass());
+    }
+
+    @Override
+    public void setTask(JavacTask task) {
+
+        this.task = task;
+    }
+
+    public JavacTask getTask() {
+        return task;
     }
 
     private void readEventHandlers(Class<?> clazz) {

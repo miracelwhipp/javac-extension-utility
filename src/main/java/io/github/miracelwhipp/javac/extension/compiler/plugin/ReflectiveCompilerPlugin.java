@@ -15,6 +15,8 @@ import java.lang.reflect.InvocationTargetException;
  */
 public abstract class ReflectiveCompilerPlugin implements Plugin {
 
+    private JavacTask task;
+
     @Override
     public String getName() {
 
@@ -31,6 +33,8 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
     @Override
     public void init(JavacTask javacTask, String... strings) {
 
+        task = javacTask;
+
         JavaCompilerTaskListener[] taskListeners = getClass().getAnnotationsByType(JavaCompilerTaskListener.class);
 
         for (JavaCompilerTaskListener taskListener : taskListeners) {
@@ -38,6 +42,11 @@ public abstract class ReflectiveCompilerPlugin implements Plugin {
             try {
 
                 TaskListener listener = taskListener.value().getDeclaredConstructor().newInstance();
+
+                if (listener instanceof TaskAware) { // TODO: decide whether to drop java 11 support
+
+                    ((TaskAware) listener).setTask(task);
+                }
 
                 CmdLineParser parser = new CmdLineParser(listener);
 
